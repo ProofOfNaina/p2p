@@ -131,3 +131,13 @@ export const useUser = () => {
   }
   return context;
 };
+
+
+export type SocialType = "twitter" | "discord" | "wallet";
+
+interface User {
+  ethosScore: number;
+  connections: SocialType[];
+  walletAddress?: string;
+}
+
