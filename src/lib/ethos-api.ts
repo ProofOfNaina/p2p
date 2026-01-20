@@ -142,3 +142,23 @@ export const getMaxConcurrentDeals = (score: number): number => {
   if (score >= 1400) return 1;
   return 0;
 };
+
+
+export async function fetchEthosScoreByAddress(address: string) {
+  const response = await fetch(
+    `https://api.ethos.network/api/v2/score/address?address=${address}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "*/*",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch Ethos score");
+  }
+
+  return response.json();
+}
+
