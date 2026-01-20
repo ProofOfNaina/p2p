@@ -91,10 +91,31 @@ export const ethosAPI = {
     }
   },
 
-  createUserkey: (socialAccount: SocialAccount): string => {
-    return `${socialAccount.platform}:${socialAccount.username.replace('@', '')}`;
+createUserkey: (socialAccount: SocialAccount): string => {
+  if (socialAccount.platform === 'twitter') {
+    // Twitter by user ID (preferred if available)
+    if (socialAccount.userId) {
+      return `service:x.com:${socialAccount.userId}`;
+    }
+
+    // Twitter by username
+    if (socialAccount.username) {
+      return `service:x.com:username:${socialAccount.username.replace('@', '')}`;
+    }
+
+    throw new Error('Twitter requires username or userId');
   }
-};
+
+  if (socialAccount.platform === 'discord') {
+    if (!socialAccount.username) {
+      throw new Error('Discord requires username');
+    }
+    return `service:discord:${socialAccount.username.replace('@', '')}`;
+  }
+
+  throw new Error('Unsupported platform');
+}
+
 
 // Trust tier definitions based on Ethos score
 export const TRUST_TIERS = {
