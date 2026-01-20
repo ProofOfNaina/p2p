@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useUser } from "@/contexts/UserContext";
 import { Twitter, MessageCircle, Check, Loader2, X } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ConnectionMode = 'twitter-username' | 'twitter-id' | 'discord' | null;
@@ -18,6 +19,25 @@ export function SocialConnection() {
   const twitterConnection = user?.socials.find(s => s.platform === 'twitter');
   const discordConnection = user?.socials.find(s => s.platform === 'discord');
 
+
+export function WalletConnection() {
+  const { connectWallet } = useUser();
+  const [address, setAddress] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleConnect = async () => {
+    try {
+      setLoading(true);
+      await connectWallet(address);
+    } catch (e) {
+      console.error(e);
+      alert("Invalid wallet or Ethos score not found");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
   const handleConnect = async () => {
     if (!inputValue.trim()) {
       setError("Please enter a valid value");
@@ -183,6 +203,26 @@ export function SocialConnection() {
           { mode: 'discord', label: 'Connect Discord' }
         ]}
       />
+    </div>
+    <div className="border rounded-xl p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <Wallet className="w-5 h-5 text-primary" />
+        <span className="font-medium">Connect Wallet</span>
+      </div>
+
+      <Input
+        placeholder="0xABC... wallet address"
+        value={address}
+        onChange={(e) => setAddress(e.target.value)}
+      />
+
+      <Button
+        onClick={handleConnect}
+        disabled={!address || loading}
+        className="w-full"
+      >
+        {loading ? "Fetching score..." : "Connect Wallet"}
+      </Button>
     </div>
   );
 }
